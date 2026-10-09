@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrackLife</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>💚</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Noto+Sans+Telugu:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0E4A47;--teal2:#16645F;--mint:#EAF4F1;--paper:#F7FBFA;--ink:#12302F;--muted:#5C7775;
+--gold:#F2A93B;--gold2:#FBE3B8;--coral:#C8452D;--line:#D5E6E2;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Plus Jakarta Sans','Noto Sans Telugu',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55}
+h1,h2,h3{font-family:'Sora','Noto Sans Telugu',sans-serif;margin:0 0 .4em;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.hidden{display:none!important}
+/* auth */
+.auth{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:var(--teal);color:#fff;padding:56px 48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.hero h1{font-size:clamp(2.2rem,4.5vw,3.6rem);line-height:1.08;max-width:12ch}
+.hero p{max-width:34ch;color:#cfe6e2;font-size:1.1rem}
+.pulse{position:absolute;right:-40px;bottom:30px;width:420px;opacity:.9}
+.pulse path{stroke:var(--gold);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:900;stroke-dashoffset:900;animation:draw 3s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.logo{font-family:Sora;font-weight:700;font-size:1.4rem}.logo i{color:var(--gold);font-style:normal}
+.authform{padding:48px;display:flex;align-items:center;justify-content:center}
+.authform .box{width:100%;max-width:400px}
+.tabs{display:flex;gap:6px;background:var(--mint);padding:4px;border-radius:12px;margin-bottom:20px}
+.tabs button{flex:1;border:0;background:none;padding:10px;border-radius:9px;cursor:pointer;font-weight:600;color:var(--muted)}
+.tabs button.on{background:#fff;color:var(--teal);box-shadow:0 1px 4px #0001}
+label{display:block;font-size:.85rem;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+textarea{resize:vertical;min-height:70px}
+.pw{position:relative}.pw button{position:absolute;right:6px;top:5px;border:0;background:none;cursor:pointer;color:var(--teal2);font-weight:600;padding:6px 8px}
+.btn{border:0;background:var(--teal);color:#fff;padding:12px 18px;border-radius:10px;font-weight:600;cursor:pointer}
+.btn:hover{background:var(--teal2)}.btn.gold{background:var(--gold);color:#3b2600}
+.btn.ghost{background:none;color:var(--teal);border:1.5px solid var(--line)}
+.btn.small{padding:7px 12px;font-size:.85rem}.btn.full{width:100%;margin-top:18px}
+.err{background:#FBE7E2;color:var(--coral);border-left:4px solid var(--coral);padding:10px 12px;border-radius:8px;margin-top:12px;font-size:.92rem}
+.langsw{position:absolute;top:18px;right:18px}
+.langsw button{border:1.5px solid var(--line);background:#fff;padding:6px 12px;border-radius:20px;cursor:pointer;font-weight:600}
+/* app shell */
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.rail{background:var(--teal);color:#fff;padding:24px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.rail .logo{margin:0 8px 22px}
+.rail button.nav{background:none;border:0;color:#cfe6e2;text-align:left;padding:11px 12px;border-radius:10px;cursor:pointer;font-weight:500}
+.rail button.nav.on{background:#ffffff1c;color:#fff;box-shadow:inset 3px 0 0 var(--gold)}
+.rail .sp{flex:1}
+main{padding:32px 36px;max-width:1100px;width:100%}
+.greet{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.greet h1{font-size:1.9rem}.greet p{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{font-size:1.05rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px}
+.stat{background:var(--mint);border-radius:14px;padding:16px}.stat b{font-family:Sora;font-size:1.9rem;display:block;color:var(--teal)}
+.stat span{color:var(--muted);font-size:.88rem}
+.stat.due{background:var(--gold2)}.stat.due b{color:#7a4a00}
+.item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border:0}.item small{color:var(--muted);display:block}
+.sev{display:inline-block;min-width:26px;text-align:center;border-radius:7px;font-weight:700;font-size:.8rem;padding:2px 7px;background:var(--mint);color:var(--teal)}
+.sev.h{background:#FBE7E2;color:var(--coral)}.sev.m{background:var(--gold2);color:#7a4a00}
+.x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.empty{color:var(--muted);padding:14px 0}
+.note{font-size:.82rem;color:var(--muted);margin-top:10px}
+.cred{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.92rem}
+.cred code{background:var(--mint);padding:3px 8px;border-radius:6px}
+/* chat */
+.chat{display:flex;flex-direction:column;height:520px}
+.msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:4px}
+.m{max-width:85%;padding:10px 14px;border-radius:14px;white-space:pre-wrap}
+.m.u{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.m.b{align-self:flex-start;background:var(--mint);border-bottom-left-radius:4px}
+.m.e{align-self:flex-start;background:#FBE7E2;color:var(--coral);border-left:4px solid var(--coral)}
+.doc{margin-top:8px;padding:8px 10px;background:var(--gold2);border-radius:9px;font-size:.9rem;color:#5a3700}
+.chatin{display:flex;gap:8px;margin-top:10px}
+.disc{font-size:.78rem;color:var(--muted);margin-top:8px}
+.cat{font-weight:600;font-size:.82rem;color:var(--teal);background:var(--mint);display:inline-block;padding:2px 9px;border-radius:20px;margin:14px 0 4px}
+.an{background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:.9rem}
+.an ul{margin:4px 0 0 18px;padding:0}.rep a{color:var(--teal2);font-weight:600}
+.fab{position:fixed;right:18px;bottom:18px;width:64px;height:64px;border-radius:50%;border:0;background:var(--gold);color:#3b2600;font-size:1.9rem;cursor:pointer;box-shadow:0 8px 24px #0004;z-index:8}
+.fab.on,.bigmic.on{animation:beat 1s infinite}
+@keyframes beat{50%{transform:scale(1.08);box-shadow:0 0 0 14px #F2A93B44}}
+.vwrap{text-align:center}
+.bigmic{width:150px;height:150px;border-radius:50%;border:0;background:var(--gold);font-size:4rem;cursor:pointer;box-shadow:0 10px 30px #F2A93B66;margin:10px auto}
+.vstat{font-family:Sora,'Noto Sans Telugu';font-size:1.3rem;margin:10px 0;min-height:1.8em}
+.vbox{background:var(--mint);border-radius:14px;padding:14px;margin:10px auto;max-width:560px;text-align:left;font-size:1.15rem}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;max-width:620px;margin:12px auto}
+.quick button{background:#fff;border:2px solid var(--line);border-radius:16px;padding:16px 8px;font-size:1.05rem;font-weight:600;cursor:pointer}
+.quick button span{display:block;font-size:2.4rem}
+.quick button:hover{border-color:var(--gold)}
+.spk{border:0;background:none;cursor:pointer;font-size:1rem}
+/* toast */
+#toasts{position:fixed;right:18px;bottom:96px;display:flex;flex-direction:column;gap:10px;z-index:9}
+.toast{background:var(--teal);color:#fff;padding:14px 16px;border-radius:12px;border-left:6px solid var(--gold);box-shadow:0 8px 24px #0003;max-width:300px}
+@media(max-width:820px){
+ .auth{grid-template-columns:1fr}.hero{padding:32px 24px;min-height:260px}.pulse{width:260px;opacity:.5}
+ .authform{padding:28px 20px}.shell{grid-template-columns:1fr}
+ .rail{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:12px}.rail .logo{margin:0 10px 0 0}.rail .sp{display:none}
+ main{padding:20px 16px}.row{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){.pulse path{animation:none;stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<div id="toasts" aria-live="polite"></div>
+<button id="fab" class="fab hidden" onclick="fabTalk()" aria-label="Talk">🎤</button>
+
+<!-- AUTH -->
+<section id="auth" class="auth hidden">
+  <div class="langsw"><button onclick="toggleLang()" id="langbtn">తెలుగు</button></div>
+  <div class="hero">
+    <div class="logo">Track<i>Life</i></div>
+    <div>
+      <h1 data-t="heroTitle"></h1>
+      <p data-t="heroSub"></p>
+    </div>
+    <svg class="pulse" viewBox="0 0 420 120" aria-hidden="true"><path d="M0 70 H120 L145 20 L180 105 L210 45 L230 70 H420"/></svg>
+  </div>
+  <div class="authform"><div class="box">
+    <div class="tabs"><button id="tabIn" class="on" onclick="setTab('in')" data-t="login"></button><button id="tabUp" onclick="setTab('up')" data-t="register"></button></div>
+    <div id="regOnly" class="hidden">
+      <label data-t="iam"></label>
+      <select id="role" onchange="roleChange()"><option value="patient" data-t="patient"></option><option value="doctor" data-t="doctor"></option></select>
+      <label data-t="fullName"></label><input id="name" autocomplete="name">
+      <div class="row"><div><label data-t="age"></label><input id="age" type="number" min="0" max="120"></div>
+      <div><label data-t="phone"></label><input id="phone" type="tel"></div></div>
+      <div id="specBox" class="hidden"><label data-t="specialty"></label><input id="specialty" placeholder="Cardiologist, General Physician..."></div>
+    </div>
+    <label data-t="email"></label><input id="email" type="email" autocomplete="email">
+    <label data-t="password"></label>
+    <div class="pw"><input id="password" type="password" autocomplete="current-password"><button type="button" onclick="togglePw('password',this)" data-t="show"></button></div>
+    <div id="authErr" class="err hidden"></div>
+    <button class="btn full" onclick="submitAuth()" id="authBtn"></button>
+  </div></div>
+</section>
+
+<!-- APP -->
+<div id="app" class="shell hidden">
+  <nav class="rail">
+    <div class="logo">Track<i>Life</i></div>
+    <div id="navItems" style="display:contents"></div>
+    <div class="sp"></div>
+    <button class="nav" onclick="toggleLang()" id="langbtn2">తెలుగు</button>
+    <button class="nav" onclick="logout()" data-t="logout"></button>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<script>
+const T={
+en:{heroTitle:"Your health story, in one safe place.",heroSub:"Track symptoms, keep medical history organised, and never miss a medicine. Patients and doctors, on the same page.",
+login:"Log in",register:"Create account",iam:"I am a",patient:"Patient",doctor:"Doctor",fullName:"Full name",age:"Age",phone:"Phone",specialty:"Specialty",email:"Email",password:"Password",show:"Show",hide:"Hide",
+logout:"Log out",home:"Dashboard",symptoms:"Symptoms",history:"Medical history",meds:"Medicines",assistant:"Assistant",sharing:"Share with doctor",patients:"My patients",
+hello:"Hello",tagline:"Small daily notes make doctor visits more useful.",loginBtn:"Log in",registerBtn:"Create account",
+statSym:"Symptoms logged",statCond:"Conditions",statMeds:"Medicines",statDue:"Doses today",
+addSym:"Log a symptom",symName:"Symptom",severity:"Severity (1-10)",notes:"Notes",date:"Date",save:"Save",
+addCond:"Add a past condition",condName:"Condition (e.g. Diabetes)",
+addMed:"Add medicine reminder",medName:"Medicine name",dose:"Dose (as written on prescription)",times:"Reminder times",addTime:"+ Add time",prescBy:"Prescribed by",
+noSym:"No symptoms yet. Log how you feel today.",noCond:"No conditions saved yet.",noMed:"No medicines yet. Add one to get reminders.",
+yourLogin:"Your login",pwNote:"Your password is stored only as a secure hash. It shows here only while you stay signed in on this device.",
+askPh:"Describe how you feel...",send:"Send",welcomeBot:"Hi, I'm the TrackLife assistant. Tell me your symptoms and I'll give general guidance. I can't help with medicine or dose questions.",
+visit:"Suggested doctor to visit",disc:"General guidance only, not a diagnosis. In an emergency call 108 / 112.",
+grantTitle:"Give a doctor access",grantEmail:"Doctor's email",grant:"Give access",granted:"Access given.",revoke:"Remove",noDocs:"No doctor has access yet.",
+privacy:"Privacy: records are encrypted in storage. The AI only sees an anonymous ID, never your name, phone or email.",
+noPat:"No patient has shared records with you yet. Ask patients to add your email under Share with doctor.",
+reports:"Reports",upReport:"Upload a report",file:"File (PDF, PNG, JPG or TXT, max 5 MB)",repTitle:"Title",category:"Category",auto:"Detect automatically",
+catlab:"Lab results",catimaging:"Scans & imaging",catprescription:"Prescriptions",catdischarge:"Discharge summaries",catother:"Other",
+analyze:"Analyse",analysis:"Analysis",download:"Download",noRep:"No reports yet. Upload a lab result, scan or prescription.",uploading:"Uploading...",uploaded:"Report saved.",
+noText:"Scanned images are stored and organised, but not read by the AI.",aiNote:"Only the text, with names and phone numbers removed, is analysed. Files stay encrypted in storage.",findings:"Key findings",followUp:"Next step",statRep:"Reports",
+voice:"Talk",voiceTitle:"Talk to TrackLife",voiceHint:"Press the big button and speak. I will answer by voice.",listening:"Listening... speak now",thinking:"Thinking...",heard:"You said",tapRepeat:"Hear again",stop:"Stop",
+noVoice:"Voice input needs Chrome or Edge. You can still tap the pictures below.",noTeVoice:"This phone has no Telugu voice. Install Telugu text-to-speech in phone settings.",
+q_fever:"Fever",q_head:"Headache",q_stomach:"Stomach pain",q_cough:"Cough",q_chest:"Chest pain",q_tired:"Weak and tired",
+s_fever:"I have fever",s_head:"I have a headache",s_stomach:"I have stomach pain",s_cough:"I have a cough",s_chest:"I have chest pain",s_tired:"I feel weak and tired",
+youHave:"Your medicine times today are",noMedsVoice:"You have no medicine reminders yet.",at:"at",readAloud:"Read aloud",orTap:"Or tap a problem",visitSay:"You should visit a",
+select:"Select",timeline:"Timeline",reminderMsg:"Time to take",remindNow:"Enable phone/desktop notifications",today:"Today's schedule",delete:"Delete"},
+te:{heroTitle:"మీ ఆరోగ్య కథ, ఒకే సురక్షిత చోట.",heroSub:"లక్షణాలను నమోదు చేయండి, వైద్య చరిత్రను క్రమంగా ఉంచండి, మందును మర్చిపోకండి. రోగి మరియు డాక్టర్ ఒకే పేజీలో.",
+login:"లాగిన్",register:"ఖాతా సృష్టించండి",iam:"నేను",patient:"రోగి",doctor:"డాక్టర్",fullName:"పూర్తి పేరు",age:"వయసు",phone:"ఫోన్",specialty:"ప్రత్యేకత",email:"ఈమెయిల్",password:"పాస్‌వర్డ్",show:"చూపు",hide:"దాచు",
+logout:"లాగ్ అవుట్",home:"డాష్‌బోర్డ్",symptoms:"లక్షణాలు",history:"వైద్య చరిత్ర",meds:"మందులు",assistant:"సహాయకుడు",sharing:"డాక్టర్‌తో పంచుకోండి",patients:"నా రోగులు",
+hello:"నమస్కారం",tagline:"రోజువారీ చిన్న నోట్స్ డాక్టర్ సందర్శనను మరింత ఉపయోగకరంగా చేస్తాయి.",loginBtn:"లాగిన్",registerBtn:"ఖాతా సృష్టించండి",
+statSym:"నమోదైన లక్షణాలు",statCond:"వ్యాధులు",statMeds:"మందులు",statDue:"నేటి మోతాదులు",
+addSym:"లక్షణం నమోదు చేయండి",symName:"లక్షణం",severity:"తీవ్రత (1-10)",notes:"గమనికలు",date:"తేదీ",save:"సేవ్",
+addCond:"గత వ్యాధిని జోడించండి",condName:"వ్యాధి (ఉదా. మధుమేహం)",
+addMed:"మందు రిమైండర్ జోడించండి",medName:"మందు పేరు",dose:"మోతాదు (ప్రిస్క్రిప్షన్‌లో ఉన్నట్లు)",times:"రిమైండర్ సమయాలు",addTime:"+ సమయం జోడించండి",prescBy:"సూచించిన డాక్టర్",
+noSym:"ఇంకా లక్షణాలు లేవు. ఈరోజు ఎలా ఉందో నమోదు చేయండి.",noCond:"ఇంకా వ్యాధులు సేవ్ చేయలేదు.",noMed:"ఇంకా మందులు లేవు. రిమైండర్ కోసం జోడించండి.",
+yourLogin:"మీ లాగిన్",pwNote:"మీ పాస్‌వర్డ్ సురక్షిత హాష్‌గా మాత్రమే నిల్వ అవుతుంది. ఈ పరికరంలో సైన్ ఇన్ ఉన్నంత వరకు మాత్రమే ఇక్కడ కనిపిస్తుంది.",
+askPh:"మీకు ఎలా ఉందో చెప్పండి...",send:"పంపు",welcomeBot:"నమస్కారం, నేను TrackLife సహాయకుడిని. మీ లక్షణాలు చెబితే సాధారణ సలహా ఇస్తాను. మందులు, మోతాదుల ప్రశ్నలకు నేను సహాయం చేయలేను.",
+visit:"సూచించిన డాక్టర్",disc:"ఇది సాధారణ సలహా మాత్రమే, నిర్ధారణ కాదు. అత్యవసరంలో 108 / 112 కి కాల్ చేయండి.",
+grantTitle:"డాక్టర్‌కు ప్రాప్యత ఇవ్వండి",grantEmail:"డాక్టర్ ఈమెయిల్",grant:"ప్రాప్యత ఇవ్వండి",granted:"ప్రాప్యత ఇచ్చారు.",revoke:"తొలగించు",noDocs:"ఇంకా ఏ డాక్టర్‌కూ ప్రాప్యత లేదు.",
+privacy:"గోప్యత: రికార్డులు గుప్తీకరించి నిల్వ అవుతాయి. AI కి అనామక ID మాత్రమే కనిపిస్తుంది, మీ పేరు, ఫోన్, ఈమెయిల్ కాదు.",
+noPat:"ఇంకా ఏ రోగీ రికార్డులు పంచుకోలేదు. రోగులను 'డాక్టర్‌తో పంచుకోండి'లో మీ ఈమెయిల్ జోడించమనండి.",
+reports:"రిపోర్టులు",upReport:"రిపోర్ట్ అప్‌లోడ్ చేయండి",file:"ఫైల్ (PDF, PNG, JPG లేదా TXT, గరిష్టంగా 5 MB)",repTitle:"శీర్షిక",category:"వర్గం",auto:"ఆటోమేటిక్‌గా గుర్తించు",
+catlab:"ల్యాబ్ ఫలితాలు",catimaging:"స్కాన్లు & ఇమేజింగ్",catprescription:"ప్రిస్క్రిప్షన్లు",catdischarge:"డిశ్చార్జ్ సారాంశాలు",catother:"ఇతరాలు",
+analyze:"విశ్లేషించు",analysis:"విశ్లేషణ",download:"డౌన్‌లోడ్",noRep:"ఇంకా రిపోర్టులు లేవు. ల్యాబ్ ఫలితం, స్కాన్ లేదా ప్రిస్క్రిప్షన్ అప్‌లోడ్ చేయండి.",uploading:"అప్‌లోడ్ అవుతోంది...",uploaded:"రిపోర్ట్ సేవ్ అయింది.",
+noText:"స్కాన్ చేసిన చిత్రాలు నిల్వ చేసి వర్గీకరిస్తాం, కానీ AI చదవదు.",aiNote:"పేర్లు, ఫోన్ నంబర్లు తొలగించిన టెక్స్ట్ మాత్రమే విశ్లేషిస్తారు. ఫైళ్లు గుప్తీకరించి నిల్వ అవుతాయి.",findings:"ముఖ్య అంశాలు",followUp:"తదుపరి అడుగు",statRep:"రిపోర్టులు",
+voice:"మాట్లాడండి",voiceTitle:"TrackLife తో మాట్లాడండి",voiceHint:"పెద్ద బటన్ నొక్కి మాట్లాడండి. నేను గొంతుతో సమాధానం చెబుతాను.",listening:"వింటున్నాను... మాట్లాడండి",thinking:"ఆలోచిస్తున్నాను...",heard:"మీరు చెప్పింది",tapRepeat:"మళ్ళీ వినండి",stop:"ఆపు",
+noVoice:"వాయిస్ ఇన్‌పుట్‌కు Chrome లేదా Edge కావాలి. క్రింది బొమ్మలను నొక్కవచ్చు.",noTeVoice:"ఈ ఫోన్‌లో తెలుగు గొంతు లేదు. ఫోన్ సెట్టింగ్స్‌లో తెలుగు టెక్స్ట్-టు-స్పీచ్ ఇన్‌స్టాల్ చేయండి.",
+q_fever:"జ్వరం",q_head:"తలనొప్పి",q_stomach:"కడుపు నొప్పి",q_cough:"దగ్గు",q_chest:"ఛాతి నొప్పి",q_tired:"నీరసం",
+s_fever:"నాకు జ్వరం ఉంది",s_head:"నాకు తలనొప్పిగా ఉంది",s_stomach:"నాకు కడుపు నొప్పిగా ఉంది",s_cough:"నాకు దగ్గు ఉంది",s_chest:"నాకు ఛాతి నొప్పిగా ఉంది",s_tired:"నాకు నీరసంగా ఉంది",
+youHave:"ఈరోజు మీ మందుల సమయాలు",noMedsVoice:"మీకు ఇంకా మందు రిమైండర్లు లేవు.",at:"సమయం",readAloud:"చదివి వినిపించు",orTap:"లేదా సమస్యను నొక్కండి",visitSay:"మీరు కలవాల్సిన డాక్టర్",
+select:"ఎంచుకోండి",timeline:"కాలక్రమం",reminderMsg:"మందు వేసుకునే సమయం",remindNow:"నోటిఫికేషన్లు ప్రారంభించండి",today:"నేటి షెడ్యూల్",delete:"తొలగించు"}
+};
+let lang=localStorage.getItem('tl_lang')||'en', me=null, tab='in', page='home', sessionPw=null, selPid=null;
+let cache={records:[],meds:[]}, chatLog=[];
+const t=k=>T[lang][k]||k;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(path,method='GET',body){
+  const r=await fetch('/api/'+path,{method,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw Object.assign(new Error(j.error||'Error'),{data:j,status:r.status});
+  return j;
+}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));
+  const other=lang==='en'?'తెలుగు':'English';
+  $('langbtn').textContent=other;$('langbtn2').textContent=other;
+  $('authBtn').textContent=tab==='in'?t('loginBtn'):t('registerBtn');
+  if(me) render();
+}
+function toggleLang(){lang=lang==='en'?'te':'en';localStorage.setItem('tl_lang',lang);applyLang()}
+function setTab(x){tab=x;$('tabIn').classList.toggle('on',x==='in');$('tabUp').classList.toggle('on',x==='up');
+  $('regOnly').classList.toggle('hidden',x==='in');$('authErr').classList.add('hidden');
+  $('password').autocomplete=x==='in'?'current-password':'new-password';applyLang()}
+function roleChange(){$('specBox').classList.toggle('hidden',$('role').value!=='doctor')}
+function togglePw(id,btn){const i=$(id);const s=i.type==='password';i.type=s?'text':'password';btn.textContent=s?t('hide'):t('show')}
+async function submitAuth(){
+  const e=$('authErr');e.classList.add('hidden');
+  try{
+    const pw=$('password').value;
+    if(tab==='in') await api('login','POST',{email:$('email').value,password:pw});
+    else await api('register','POST',{role:$('role').value,name:$('name').value,age:$('age').value,phone:$('phone').value,
+      specialty:$('specialty').value,email:$('email').value,password:pw});
+    sessionPw=pw;$('password').value='';
+    await boot();
+  }catch(x){e.textContent=x.message;e.classList.remove('hidden')}
+}
+async function logout(){await api('logout','POST');me=null;sessionPw=null;chatLog=[];location.reload()}
+async function boot(){
+  try{me=await api('me')}catch{me=null}
+  $('auth').classList.toggle('hidden',!!me);$('app').classList.toggle('hidden',!me);
+  $('fab').classList.toggle('hidden',!(me&&me.role==='patient'));
+  if(me){page='home';await load();buildNav();render();startReminders()}
+  applyLang();
+}
+async function load(){
+  if(me.role==='patient'){[cache.records,cache.meds,cache.reports]=await Promise.all([api('records'),api('meds'),api('reports')])}
+}
+function buildNav(){
+  const items=me.role==='patient'?[['home','home'],['voice','voice'],['symptoms','symptoms'],['history','history'],['reports','reports'],['meds','meds'],['assistant','assistant'],['sharing','sharing']]
+                                :[['home','patients']];
+  $('navItems').innerHTML=items.map(([p,k])=>`<button class="nav ${p===page?'on':''}" data-p="${p}" onclick="go('${p}')">${t(k)}</button>`).join('');
+}
+function go(p){page=p;buildNav();render()}
+function render(){
+  buildNav();
+  const m=$('main');
+  if(me.role==='doctor') return renderDoctor(m);
+  ({home:rHome,symptoms:rSymptoms,voice:rVoice,history:rHistory,reports:rReports,meds:rMeds,assistant:rAssistant,sharing:rSharing}[page])(m);
+}
+const greet=()=>`<div class="greet"><div><h1>${t('hello')}, ${esc((me.name||'').split(' ')[0])}</h1><p>${t('tagline')}</p></div></div>`;
+const sevCls=s=>s>=8?'h':s>=5?'m':'';
+function symList(limit=999){const r=cache.records.filter(x=>x.kind==='symptom').slice(0,limit);
+  return r.length?r.map(x=>`<div class="item"><div><b>${esc(x.title)}</b><small>${esc(x.date)} ${x.notes?'· '+esc(x.notes):''}</small></div>
+  <div><span class="sev ${sevCls(x.severity)}">${esc(x.severity||'-')}</span> <button class="x" aria-label="${t('delete')}" onclick="delRec(${x.id})">✕</button></div></div>`).join(''):`<div class="empty">${t('noSym')}</div>`}
+function condList(){const r=cache.records.filter(x=>x.kind==='condition');
+  return r.length?r.map(x=>`<div class="item"><div><b>${esc(x.title)}</b><small>${esc(x.date)} ${x.notes?'· '+esc(x.notes):''}</small></div>
+  <button class="x" aria-label="${t('delete')}" onclick="delRec(${x.id})">✕</button></div>`).join(''):`<div class="empty">${t('noCond')}</div>`}
+function medList(items=cache.meds,editable=true){return items.length?items.map(x=>`<div class="item"><div><b>${esc(x.name)}</b> ${esc(x.dose)}
+  <small>${x.times.map(esc).join(' · ')} ${x.prescribed_by?'· '+esc(x.prescribed_by):''}</small></div>
+  ${editable?`<button class="x" aria-label="${t('delete')}" onclick="delMed(${x.id})">✕</button>`:''}</div>`).join(''):`<div class="empty">${t('noMed')}</div>`}
+function rHome(m){
+  const syms=cache.records.filter(x=>x.kind==='symptom').length,conds=cache.records.filter(x=>x.kind==='condition').length;
+  const doses=cache.meds.reduce((n,x)=>n+x.times.length,0);
+  m.innerHTML=greet()+`<div class="stats">
+   <div class="stat"><b>${syms}</b><span>${t('statSym')}</span></div><div class="stat"><b>${conds}</b><span>${t('statCond')}</span></div>
+   <div class="stat"><b>${(cache.reports||[]).length}</b><span>${t('statRep')}</span></div><div class="stat"><b>${cache.meds.length}</b><span>${t('statMeds')}</span></div><div class="stat due"><b>${doses}</b><span>${t('statDue')}</span></div></div>
+   <div class="grid"><div class="card"><h3>${t('today')}</h3>${schedule()}
+   <button class="btn ghost small" onclick="askNotif()">${t('remindNow')}</button></div>
+   <div class="card"><h3>${t('symptoms')}</h3>${symList(3)}</div>
+   <div class="card"><h3>${t('yourLogin')}</h3><div class="cred"><span>${t('email')}:</span><code>${esc(me.email)}</code></div>
+   <div class="cred" style="margin-top:8px"><span>${t('password')}:</span><code id="pwv">••••••••</code>
+   <button class="btn ghost small" onclick="showPw(this)">${t('show')}</button></div><p class="note">${t('pwNote')}</p><p class="note">🔒 ${t('privacy')}</p></div></div>`;
+}
+function showPw(b){const c=$('pwv');const hid=c.textContent.startsWith('•');c.textContent=hid?(sessionPw||'(sign in again to view)'):'••••••••';b.textContent=hid?t('hide'):t('show')}
+function schedule(){const rows=[];cache.meds.forEach(x=>x.times.forEach(tm=>rows.push([tm,x])));rows.sort();
+  return rows.length?rows.map(([tm,x])=>`<div class="item"><div><b>${tm}</b> ${esc(x.name)}<small>${esc(x.dose)}</small></div></div>`).join(''):`<div class="empty">${t('noMed')}</div>`}
+function rSymptoms(m){
+  m.innerHTML=greet()+`<div class="grid"><div class="card"><h3>${t('addSym')}</h3>
+  <label>${t('symName')}</label><input id="s_t"><div class="row"><div><label>${t('severity')}</label><input id="s_s" type="number" min="1" max="10" value="3"></div>
+  <div><label>${t('date')}</label><input id="s_d" type="date" value="${new Date().toISOString().slice(0,10)}"></div></div>
+  <label>${t('notes')}</label><textarea id="s_n"></textarea><div id="s_e" class="err hidden"></div>
+  <button class="btn full" onclick="addRec('symptom','s')">${t('save')}</button></div>
+  <div class="card"><h3>${t('symptoms')}</h3>${symList()}</div></div>`;
+}
+function rHistory(m){
+  m.innerHTML=greet()+`<div class="grid"><div class="card"><h3>${t('addCond')}</h3>
+  <label>${t('condName')}</label><input id="c_t"><label>${t('date')}</label><input id="c_d" type="date">
+  <label>${t('notes')}</label><textarea id="c_n"></textarea><div id="c_e" class="err hidden"></div>
+  <button class="btn full" onclick="addRec('condition','c')">${t('save')}</button></div>
+  <div class="card"><h3>${t('history')}</h3>${condList()}</div></div>`;
+}
+async function addRec(kind,p){
+  try{await api('records','POST',{kind,title:$(p+'_t').value,notes:$(p+'_n').value,date:$(p+'_d').value,severity:p==='s'?+$('s_s').value:null});
+    cache.records=await api('records');render()}catch(x){const e=$(p+'_e');e.textContent=x.message;e.classList.remove('hidden')}
+}
+async function delRec(id){await api('records/'+id,'DELETE');cache.records=await api('records');render()}
+let timeCount=1;
+function rMeds(m){
+  m.innerHTML=greet()+`<div class="grid"><div class="card"><h3>${t('addMed')}</h3>
+  <label>${t('medName')}</label><input id="m_n"><label>${t('dose')}</label><input id="m_d">
+  <label>${t('prescBy')}</label><input id="m_p"><label>${t('times')}</label><div id="m_times"><input type="time" class="mt" value="09:00"></div>
+  <button class="btn ghost small" style="margin-top:8px" onclick="addTime()">${t('addTime')}</button><div id="m_e" class="err hidden"></div>
+  <button class="btn full" onclick="addMed()">${t('save')}</button></div>
+  <div class="card"><h3>${t('meds')}</h3>${medList()}</div></div>`;
+}
+function addTime(){const i=document.createElement('input');i.type='time';i.className='mt';i.style.marginTop='6px';$('m_times').appendChild(i)}
+async function addMed(){
+  try{await api('meds','POST',{name:$('m_n').value,dose:$('m_d').value,prescribed_by:$('m_p').value,times:[...document.querySelectorAll('.mt')].map(i=>i.value).filter(Boolean)});
+    cache.meds=await api('meds');render()}catch(x){const e=$('m_e');e.textContent=x.message;e.classList.remove('hidden')}
+}
+async function delMed(id){await api('meds/'+id,'DELETE');cache.meds=await api('meds');render()}
+/* assistant */
+function rAssistant(m){
+  if(!chatLog.length) chatLog.push({c:'b',t:t('welcomeBot')});
+  m.innerHTML=greet()+`<div class="card"><div class="chat"><div class="msgs" id="msgs"></div>
+  <div class="chatin"><input id="q" placeholder="${t('askPh')}" onkeydown="if(event.key==='Enter')sendChat()"><button class="btn" onclick="sendChat()">${t('send')}</button></div>
+  <div class="disc">${t('disc')}<br>🔒 ${t('privacy')}</div></div></div>`;
+  paintChat();
+}
+function paintChat(){const b=$('msgs');if(!b)return;
+  b.innerHTML=chatLog.map((x,i)=>`<div class="m ${x.c}">${esc(x.t)}${x.doc?`<div class="doc">🩺 ${t('visit')}: <b>${esc(x.doc)}</b></div>`:''}${x.c!=='u'?`<button class="spk" aria-label="${t('readAloud')}" onclick="speakMsg(${i})">🔊</button>`:''}</div>`).join('');b.scrollTop=b.scrollHeight}
+async function sendChat(){
+  const q=$('q').value.trim();if(!q)return;$('q').value='';chatLog.push({c:'u',t:q});paintChat();
+  try{const r=await api('chat','POST',{message:q,lang});chatLog.push({c:'b',t:r.reply,doc:r.specialist})}
+  catch(x){chatLog.push({c:'e',t:'⚠ '+x.message,doc:x.data&&x.data.specialist})}
+  paintChat();
+}
+/* sharing */
+async function rSharing(m){
+  const docs=await api('doctors');
+  m.innerHTML=greet()+`<div class="grid"><div class="card"><h3>${t('grantTitle')}</h3><label>${t('grantEmail')}</label><input id="g_e" type="email">
+  <div id="g_m" class="err hidden"></div><button class="btn full" onclick="grantDoc()">${t('grant')}</button></div>
+  <div class="card">${docs.length?docs.map(d=>`<div class="item"><div><b>${esc(d.name)}</b><small>${esc(d.specialty||'')} ${esc(d.email)}</small></div>
+  <button class="btn ghost small" onclick="revokeDoc(${d.id})">${t('revoke')}</button></div>`).join(''):`<div class="empty">${t('noDocs')}</div>`}</div></div>`;
+}
+async function grantDoc(){const e=$('g_m');try{await api('grant','POST',{doctor_email:$('g_e').value});toast(t('granted'));rSharing($('main'))}
+  catch(x){e.textContent=x.message;e.classList.remove('hidden')}}
+async function revokeDoc(id){await api('revoke/'+id,'POST');rSharing($('main'))}
+/* doctor */
+async function renderDoctor(m){
+  const ps=await api('patients');
+  let detail='';
+  if(selPid){try{const d=await api('patients/'+selPid);
+    const recs=d.records.map(x=>`<div class="item"><div><b>${esc(x.title)}</b> <small>${t(x.kind==='symptom'?'symptoms':'history')} · ${esc(x.date)} ${x.notes?'· '+esc(x.notes):''}</small></div>${x.severity?`<span class="sev ${sevCls(x.severity)}">${x.severity}</span>`:''}</div>`).join('')||`<div class="empty">${t('noSym')}</div>`;
+    detail=`<div class="card" style="margin-top:18px"><h3>${esc(d.patient.name)} ${d.patient.age?'· '+esc(d.patient.age):''}</h3>
+    <div class="grid"><div><h3>${t('timeline')}</h3>${recs}</div><div><h3>${t('meds')}</h3>${medList(d.meds,false)}</div></div>
+    <h3 style="margin-top:18px">${t('reports')}</h3>${grouped(d.reports||[],false)}</div>`}catch(x){detail=`<div class="err">${esc(x.message)}</div>`}}
+  m.innerHTML=`<div class="greet"><div><h1>${t('hello')}, Dr. ${esc((me.name||'').split(' ').slice(-1)[0])}</h1><p>${me.specialty?esc(me.specialty):''}</p></div></div>
+  <div class="stats"><div class="stat"><b>${ps.length}</b><span>${t('patients')}</span></div></div>
+  <div class="card"><h3>${t('patients')}</h3>${ps.length?ps.map(p=>`<div class="item"><div><b>${esc(p.name)}</b><small>${esc(p.email)} ${p.age?'· '+esc(p.age):''}</small></div>
+  <button class="btn small ${p.id===selPid?'gold':''}" onclick="selPid=${p.id};renderDoctor($('main'))">${t('select')}</button></div>`).join(''):`<div class="empty">${t('noPat')}</div>`}</div>`+detail;
+}
+/* reports */
+const CATS=['lab','imaging','prescription','discharge','other'];
+function repCard(r,mine){const a=r.analysis;
+  return `<div class="item rep"><div style="flex:1"><b>${esc(r.title)}</b><small>${esc(r.date)} · ${esc(r.filename)} · ${Math.round(r.size/1024)} KB ${r.notes?'· '+esc(r.notes):''}</small>
+  <a href="/api/reports/${r.id}/file">${t('download')}</a>${mine&&r.has_text?` · <a href="#" onclick="analyzeRep(${r.id});return false">${t('analyze')}</a>`:''}
+  ${a?`<div class="an"><b>${t('analysis')}</b><br>${esc(a.summary)}${a.findings&&a.findings.length?`<br><b>${t('findings')}</b><ul>${a.findings.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:''}${a.follow_up?`<b>${t('followUp')}:</b> ${esc(a.follow_up)}`:''}</div>`
+  :(!r.has_text?`<div class="an">${t('noText')}</div>`:'')}</div>
+  ${mine?`<button class="x" aria-label="${t('delete')}" onclick="delRep(${r.id})">✕</button>`:''}</div>`}
+function grouped(list,mine){return list.length?CATS.map(c=>{const g=list.filter(r=>r.category===c);
+  return g.length?`<div class="cat">${t('cat'+c)}</div>${g.map(r=>repCard(r,mine)).join('')}`:''}).join(''):`<div class="empty">${t('noRep')}</div>`}
+async function rReports(m){
+  cache.reports=await api('reports');
+  m.innerHTML=greet()+`<div class="grid"><div class="card"><h3>${t('upReport')}</h3>
+  <label>${t('file')}</label><input id="r_f" type="file" accept=".pdf,.png,.jpg,.jpeg,.txt,application/pdf,image/png,image/jpeg,text/plain">
+  <label>${t('repTitle')}</label><input id="r_t"><div class="row"><div><label>${t('category')}</label><select id="r_c"><option value="auto">${t('auto')}</option>${CATS.map(c=>`<option value="${c}">${t('cat'+c)}</option>`).join('')}</select></div>
+  <div><label>${t('date')}</label><input id="r_d" type="date" value="${new Date().toISOString().slice(0,10)}"></div></div>
+  <label>${t('notes')}</label><textarea id="r_n"></textarea><div id="r_e" class="err hidden"></div>
+  <button class="btn full" id="r_b" onclick="uploadRep()">${t('save')}</button><p class="note">🔒 ${t('aiNote')}</p></div>
+  <div class="card"><h3>${t('reports')}</h3>${grouped(cache.reports,true)}</div></div>`;
+}
+async function uploadRep(){
+  const e=$('r_e');e.classList.add('hidden');const f=$('r_f').files[0];
+  if(!f){e.textContent=t('file');e.classList.remove('hidden');return}
+  const fd=new FormData();fd.append('file',f);fd.append('title',$('r_t').value);fd.append('category',$('r_c').value);
+  fd.append('date',$('r_d').value);fd.append('notes',$('r_n').value);fd.append('lang',lang);
+  $('r_b').disabled=true;$('r_b').textContent=t('uploading');
+  try{const r=await fetch('/api/reports',{method:'POST',body:fd});const j=await r.json().catch(()=>({error:'Upload failed'}));
+    if(!r.ok)throw new Error(j.error);toast(t('uploaded'));rReports($('main'))}
+  catch(x){e.textContent=x.message;e.classList.remove('hidden');$('r_b').disabled=false;$('r_b').textContent=t('save')}
+}
+async function analyzeRep(id){try{await api('reports/'+id+'/analyze','POST',{lang});rReports($('main'))}catch(x){toast('⚠ '+x.message)}}
+async function delRep(id){await api('reports/'+id,'DELETE');rReports($('main'))}
+/* voice assistant */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,listening=false,lastSpoken='',vState={heard:'',reply:'',status:''};
+const locale=()=>lang==='te'?'te-IN':'en-IN';
+function speak(text,onend){
+  if(!('speechSynthesis' in window)){return}
+  speechSynthesis.cancel();lastSpoken=text;
+  const u=new SpeechSynthesisUtterance(text);u.lang=locale();u.rate=.9;
+  const v=speechSynthesis.getVoices().find(v=>v.lang.replace('_','-').toLowerCase().startsWith(lang));
+  if(v)u.voice=v;else if(lang==='te'&&speechSynthesis.getVoices().length)toast(t('noTeVoice'));
+  if(onend)u.onend=onend;speechSynthesis.speak(u);
+}
+function speakMsg(i){const x=chatLog[i];speak(x.t+(x.doc?'. '+t('visitSay')+': '+x.doc:''))}
+function listen(cb){
+  if(!SR){toast(t('noVoice'));return}
+  if(listening&&rec){rec.stop();return}
+  speechSynthesis.cancel();rec=new SR();rec.lang=locale();rec.interimResults=false;rec.maxAlternatives=1;
+  rec.onstart=()=>{listening=true;vSet('status',t('listening'));mic(true)};
+  rec.onend=()=>{listening=false;mic(false);if(vState.status===t('listening'))vSet('status','')};
+  rec.onerror=()=>{listening=false;mic(false);vSet('status',t('noVoice'))};
+  rec.onresult=e=>cb(e.results[0][0].transcript);
+  rec.start();
+}
+function mic(on){['fab','bigmic'].forEach(id=>{const e=$(id);if(e)e.classList.toggle('on',on)})}
+function vSet(k,v){vState[k]=v;const map={status:'vstat',heard:'vheard',reply:'vreply'};const e=$(map[k]);
+  if(e){e.textContent=v;if(k!=='status')e.parentElement.classList.toggle('hidden',!v)}}
+function scheduleText(){const rows=[];cache.meds.forEach(x=>x.times.forEach(tm=>rows.push([tm,x])));rows.sort();
+  return rows.length?t('youHave')+': '+rows.map(([tm,x])=>`${x.name} ${t('at')} ${tm}`).join(', '):t('noMedsVoice')}
+async function handleVoice(text){
+  vSet('heard',text);
+  if(/my (medicines|tablets|reminders)|medicine (time|reminder)|నా మందు|నా మాత్ర|రిమైండర్|మందుల సమయ/i.test(text)){
+    const r=scheduleText();vSet('reply',r);speak(r);return}
+  if(/\breports?\b|రిపోర్ట్/i.test(text)){go('reports');speak(t('reports'));return}
+  vSet('status',t('thinking'));
+  try{const r=await api('chat','POST',{message:text,lang,voice:true});
+    const full=r.reply+' '+t('visitSay')+': '+r.specialist;
+    chatLog.push({c:'u',t:text},{c:'b',t:r.reply,doc:r.specialist});vSet('status','');vSet('reply',full);speak(full)}
+  catch(x){const full=x.message+(x.data&&x.data.specialist?' '+t('visitSay')+': '+x.data.specialist:'');
+    vSet('status','');vSet('reply','⚠ '+full);speak(full)}
+}
+function rVoice(m){
+  const q=[['fever','🤒'],['head','🤕'],['stomach','🤢'],['cough','😷'],['chest','💔'],['tired','😴']];
+  m.innerHTML=`<div class="vwrap"><h1>${t('voiceTitle')}</h1><p class="note" style="font-size:1rem">${t('voiceHint')}</p>
+  <button id="bigmic" class="bigmic" onclick="listen(handleVoice)" aria-label="${t('voice')}">🎤</button>
+  <div id="vstat" class="vstat">${esc(vState.status)}</div>
+  <div class="vbox ${vState.heard?'':'hidden'}"><small>${t('heard')}</small><br><span id="vheard">${esc(vState.heard)}</span></div>
+  <div class="vbox ${vState.reply?'':'hidden'}"><span id="vreply">${esc(vState.reply)}</span><br>
+  <button class="btn gold small" style="margin-top:8px" onclick="speak(lastSpoken||vState.reply)">🔊 ${t('tapRepeat')}</button>
+  <button class="btn ghost small" style="margin-top:8px" onclick="speechSynthesis.cancel()">⏹ ${t('stop')}</button></div>
+  <p class="note" style="font-size:1rem">${t('orTap')}</p>
+  <div class="quick">${q.map(([k,e])=>`<button onclick="handleVoice(t('s_${k}'))"><span>${e}</span>${t('q_'+k)}</button>`).join('')}</div></div>`;
+  if(!SR)toast(t('noVoice'));
+}
+function fabTalk(){if(page!=='voice'){go('voice');setTimeout(()=>listen(handleVoice),150)}else listen(handleVoice)}
+if('speechSynthesis' in window)speechSynthesis.getVoices();
+/* reminders */
+const fired=new Set();
+function askNotif(){if('Notification' in window)Notification.requestPermission()}
+function toast(msg){const d=document.createElement('div');d.className='toast';d.textContent=msg;$('toasts').appendChild(d);setTimeout(()=>d.remove(),9000)}
+let remTimer=null;
+function startReminders(){
+  if(me.role!=='patient'||remTimer)return;
+  const tick=()=>{const n=new Date(),hm=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'),day=n.toDateString();
+    cache.meds.forEach(x=>x.times.forEach(tm=>{const k=day+x.id+tm;
+      if(tm===hm&&!fired.has(k)){fired.add(k);const msg=`💊 ${t('reminderMsg')} ${x.name} ${x.dose||''}`;toast(msg);speak(`${t('reminderMsg')} ${x.name} ${x.dose||''}`);
+        if('Notification' in window&&Notification.permission==='granted')new Notification('TrackLife',{body:msg})}}))};
+  tick();remTimer=setInterval(tick,20000);
+}
+setTab('in');boot();
+</script>
+</body>
+</html>
